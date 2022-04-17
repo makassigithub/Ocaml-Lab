@@ -220,95 +220,84 @@ module Tp2h22 : TP2H22 = struct
         let _,t = timeRun si#charger_donnees nom_fichier in
         print_string ("Chargement termine dans un temps de: " ^ (string_of_float t) ^ " secondes\n");
         flush stdout;
-   
-   (*
-   let code_nom_pays = map(fun indic_list->
-    let indic = (nth indic_list 0) in
-      indic#get_code_pays ^ ": "^indic#get_nom_pays) si#retourner_donnees;
-  
-  let code_nom_indicateur = map(fun indic -> 
-    indic#get_code_indicateur ^ ": " ^indic#get_nom_indicateur)
-      (nth donnees 0);
-      *)
-        (* ... *)
+
   let top = openTk () in                     (*  creer fenetre principale *)
-	  Wm.title_set top "Syst�me d'indicateurs";
+	  Wm.title_set top "Systeme d'indicateurs";
     Wm.geometry_set top "680x580";
     let l1 = Label.create ~text:"Bienvenue a l'outil de recherche d'indicateurs" top in
     pack [l1];
-		let text_var_type = Textvariable.create () in
-		Textvariable.set text_var_type "";
-		let v = Textvariable.create () in
-		Textvariable.set v "";
+		let input_indicateur_selectionne = Textvariable.create () in
+		Textvariable.set input_indicateur_selectionne "";
+		let input_pays_selectionne = Textvariable.create () in
+		Textvariable.set input_pays_selectionne "";
 		let text_var_resultat = Textvariable.create () in
 		Textvariable.set text_var_resultat "";
-		let mylist = Listbox.create ~background:(`Color "#FF7F00")
+		let list_pays = Listbox.create ~background:(`Color "#55aa99")
     	top in
-		pack[mylist]~side:`Top ~fill:`X;      (*  creation de liste box pour afficher les listes *)
+		pack[list_pays]~side:`Top ~fill:`X;      (*  creation de liste box pour afficher les listes *)
 		let _ = Listbox.insert
     ~index:`End
 		~texts: (map(fun indic_list->
     let indic = (nth indic_list 0) in
-      indic#get_code_pays ^ ": "^indic#get_nom_pays) si#retourner_donnees) mylist in
-		let data_type = Listbox.create ~background:(`Color "#f8f8ff")
+      indic#get_code_pays ^ ": "^indic#get_nom_pays) si#retourner_donnees) list_pays in
+		let list_indicateur = Listbox.create ~background:(`Color "#c0f6e0")
    	top in
-		pack[data_type]~side:`Top ~fill:`X;
+		pack[list_indicateur]~side:`Top ~fill:`X;
 		let _ = Listbox.insert
     ~index:`End
 		~texts:(map(fun indic -> 
     indic#get_code_indicateur ^ ": " ^indic#get_nom_indicateur)
       (nth si#retourner_donnees 0))
-    data_type in
-		let pays = Label.create ~text:"Pays selectionne" top in
-		let pays_selectionne = Label.create ~background:(`Color "#ebff67") ~textvariable:v
+    list_indicateur in
+		let label_pays_selectionne = Label.create ~text:"Pays selectionne" top in
+		let valeur_pays_selectionne = Label.create ~background:(`Color "#55aa99") ~textvariable:input_pays_selectionne
     top in
-		let type_selectionne = Label.create ~background:(`Color "#ebff67") ~textvariable:text_var_type
+    let label_indicteur_selectionne = Label.create ~text:"Indicateur selectionne" top in
+		let valeur_indicteur_selectionne = Label.create ~background:(`Color "#c0f6e0") ~textvariable:input_indicateur_selectionne
     top in
 		let afficher_pays = Button.create
     	~text:"Afficher le pays"
    		~command:(fun () ->
-          (* selection dans la liste d'information*)
       	try                                                          
-          let n = match (List.hd (Listbox.curselection mylist)) with
+          let n = match (List.hd (Listbox.curselection list_pays)) with
             | `Num y -> y
-            | _ -> failwith "pas de selection"
+            | _ -> failwith "Erreur: Veuillez selectionner un pays"
           in
 
-		        Textvariable.set v(List.nth (map(fun indic_list->
+		        Textvariable.set input_pays_selectionne(List.nth (map(fun indic_list->
     let indic = (nth indic_list 0) in
       indic#get_code_pays ^ ": "^indic#get_nom_pays) si#retourner_donnees) n)
       	with _ -> (print_endline "pas de selection"; flush stdout)
 	     ) top in
-          let afficher_type_donnees = Button.create
+          let afficher_indicateur = Button.create
             ~text:"Afficher l'indicateur"
             ~command:(fun () ->
               try
-          let n = match (List.hd (Listbox.curselection data_type)) with
+          let n = match (List.hd (Listbox.curselection list_indicateur)) with
               | `Num y -> y
-              | _ -> failwith "pas de s�lection"
+              | _ -> failwith "Erreur: Veuillez selectionner un indicateur"
 		        in
-          Textvariable.set text_var_type (List.nth (map(fun indic -> 
+          Textvariable.set input_indicateur_selectionne (List.nth (map(fun indic -> 
     indic#get_code_indicateur ^ ": " ^indic#get_nom_indicateur)
       (nth si#retourner_donnees 0)) n)
-     	    with _ -> (print_endline "pas de s�lection"; flush stdout)
+     	    with _ -> (print_endline "pas de selection"; flush stdout)
 	     ) top in
 		let afficher_resultats = Button.create
-	    ~text:"Afficher les resultats"
+	    ~text:"Afficher le resultat"
 	   	~command:(fun () ->
 	  	let d = Toplevel.create top in
 	  	begin
         Wm.title_set d "Resultat de la recherche";
         Wm.geometry_set d "600x450";
-        let scry = Scrollbar.create d in                        (*  cr�e un text pour affiche les resultats *)
+        let scry = Scrollbar.create d in  
         let txt = Text.create ~width:20 ~height:25
           ~yscrollcommand:(Scrollbar.set scry)
-          ~background:(`Color "#FFCB60")
-          ~foreground:(`Color "#3F2204")
+          ~background:(`Color "#ACDF84")
           d in
         pack[txt]~side:`Top ~fill:`X;
-        let nom_code_pays = (Textvariable.get v) in 
+        let nom_code_pays = (Textvariable.get input_pays_selectionne) in 
         let code_pays = nth (decouper_chaine nom_code_pays ":" ) 0 in
-        let nom_code_indicateur =  (Textvariable.get text_var_type) in
+        let nom_code_indicateur =  (Textvariable.get input_indicateur_selectionne) in
         let code_indicateur = nth (decouper_chaine nom_code_indicateur ":") 0 in
         let indicateur = si#retourner_indicateur (code_pays,code_indicateur) in 
         Text.insert (`End,[])  ("Indicateur selectionnes:\n\n") txt;	 
@@ -321,9 +310,11 @@ module Tp2h22 : TP2H22 = struct
 		  end)
       top in
       (*  ajoute les labels dans la fenetre *)
-		pack[pays]~side:`Top ~fill:`X;		
-		pack[pays_selectionne]~side:`Top ~fill:`X;pack[afficher_pays]~side:`Top ~fill:`X;pack[type_selectionne]~side:`Top ~fill:`X;
-		pack[afficher_type_donnees]~side:`Top ~fill:`X;pack[afficher_resultats]~side:`Top ~fill:`X;
+		pack[label_pays_selectionne]~side:`Top;		
+		pack[valeur_pays_selectionne]~side:`Top  ~fill:`X;
+    pack[label_indicteur_selectionne]~side:`Top;
+    pack[valeur_indicteur_selectionne]~side:`Top ~fill:`X;
+    pack [afficher_pays;afficher_indicateur;afficher_resultats]~side:`Left ~expand:true;
         let _ = Printexc.print mainLoop () in
 	print_endline "Merci et au revoir!\n"
       initializer if interface then self#lancer_interface_sindicateurs else self#lancer_systeme_indicateurs

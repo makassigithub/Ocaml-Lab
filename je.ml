@@ -80,7 +80,7 @@ let si = new sysind_education "les donnees ouvertes de la banque mondiale" "l'ed
 
 (* Résultat:
 Recherche dans les donnees ouvertes de la banque mondiale pour le theme de l'education.
-val si : Tp2e16.sysind_education = <obj>
+val si : Tp2h22.sysind_education = <obj>
 *)
 
 let ind1 = new indicateur ["Canada";
@@ -91,7 +91,7 @@ let ind1 = new indicateur ["Canada";
                           "66.2";"";"";"";"";"";"68.1"];;
 
 (* Résultat:
-val ind : Tp2e16.indicateur = <obj>
+val ind : Tp2h22.indicateur = <obj>
 *)
 
 ind1#afficher_indicateur;;
@@ -112,7 +112,7 @@ let ind2 = new indicateur ["France";
                             "0.99473";"";"";"";"";"";"0.986241"];;
 
 (* Résultat:
-val ind2 : Tp2e16.indicateur = <obj>
+val ind2 : Tp2h22.indicateur = <obj>
 *)
 
 si#afficher_indicateurspays [ind1;ind2];;
@@ -214,7 +214,7 @@ val ni : int = 35424
 si#retourner_donnees;;
 
 (* Résultat:
-- : Tp2e16.indicateur list list =
+- : Tp2h22.indicateur list list =
 [[<obj>; <obj>; <obj>; <obj>; <obj>; <obj>; <obj>; <obj>; <obj>; <obj>;
   <obj>; <obj>; <obj>; <obj>; <obj>; <obj>; <obj>; <obj>; <obj>; <obj>;
   <obj>; <obj>; <obj>; <obj>; <obj>; <obj>; <obj>; <obj>; <obj>; <obj>;
@@ -236,7 +236,7 @@ si#retourner_donnees;;
 let ind = si#retourner_indicateur ("FRA","SE.ENR.PRIM.FM.ZS");;
 
 (* Résultat:
-val ind : Tp2e16.indicateur = <obj>
+val ind : Tp2h22.indicateur = <obj>
 *)
 
 
@@ -251,7 +251,7 @@ let lp = si#retourner_indicateurs_pays "ARG";;
 let np = List.length lp;;
 
 (* Résultat:
-val lp : Tp2e16.indicateur list =
+val lp : Tp2h22.indicateur list =
   [<obj>; <obj>; <obj>; <obj>; <obj>; <obj>; <obj>; <obj>; <obj>; <obj>;
    <obj>; <obj>; <obj>; <obj>; <obj>; <obj>; <obj>; <obj>; <obj>; <obj>;
    <obj>; <obj>; <obj>; <obj>; <obj>; <obj>; <obj>; <obj>; <obj>; <obj>;
@@ -287,7 +287,7 @@ Veuillez entrer le numero de l'indicateur dont vous voulez sauvegarder (de 1 a 1
 Veuillez consulter le fichier 'Resultats.txt' dans votre repertoire courant!
 
 Merci et au revoir!
-val asi : Tp2e16.app_sysindicateurs = <obj>
+val asi : Tp2h22.app_sysindicateurs = <obj>
 *)
 
 let asi = new app_sysindicateurs "data.csv" true;;
@@ -298,7 +298,7 @@ Chargement des donnees en cours ...
 Chargement termine dans un temps de: 4.09433102608 secondes
 Merci et au revoir!
 
-val asi : Tp2e16.app_sysindicateurs = <obj>
+val asi : Tp2h22.app_sysindicateurs = <obj>
 Affichage d'une fenêtre graphique.
 *)
 
@@ -338,7 +338,7 @@ l'indicateur n'existe pas
 - : unit = ()
 *)
 
-let asi = new app_sysindicateurs "API_4_DS2_fr_csv_v2.csv" false;;
+let asi = new app_sysindicateurs "data.csv" false;;
 
 (* Résultat:
 Recherche dans les donnees ouvertes de la banque mondiale pour le theme de l'education.
@@ -348,5 +348,5 @@ Veuillez entrer le code du pays qui vous interesse:
 EXP
 ;;
 Aucune donnee trouvee, veuillez verifier le code du pays
-val asi : Tp2e16.app_sysindicateurs = <obj>
+val asi : Tp2h22.app_sysindicateurs = <obj>
 *)
