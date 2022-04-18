@@ -52,6 +52,7 @@ module Tp2h22 : TP2H22 = struct
       (* @M�thode : afficher_indicateur : unit                            *)
       (* @Description : afficher un indicateur selon un certain formatage *)
       method afficher_indicateur = 
+      (* Afficher les champs de l'indicateur*)
        print_string ("Code de l'indicateur: " ^ code_indicateur ^ ".\n");
        print_string ("Nom de l'indicateur: " ^ nom_indicateur ^ ".\n");
        print_string ("Code du pays: " ^ code_pays ^ ".\n");
@@ -106,7 +107,8 @@ module Tp2h22 : TP2H22 = struct
       (* @Description : retourner un indicateur se trouvant dans le map     *)
 
       method retourner_indicateur (cle:string*string) =
-       (* A corriger *)
+       (*Parcourir le map des indicateurs et retourner l'indicateur dont le code pays
+       et et le code indicateur correspond a la clef *)
        IndicateursMap.find cle !map_indicateurs
 
       (* -- � IMPLANTER (6 PTS) -----------------------------------------*)
@@ -114,12 +116,16 @@ module Tp2h22 : TP2H22 = struct
       (* @Description : supprimer un indicateur dans le map              *)
 
       method supprimer_indicateur (cle:string*string) =
+       (*Parcourir le map des indicateurs et supprimer l'indicateur dont le code pays
+       et et le code indicateur correspond a la clef *)
        map_indicateurs := IndicateursMap.remove cle !map_indicateurs
 
       (* -- � IMPLANTER (6 PTS) -------------------------------------------------*)
       (* @M�thode : supprimer_liste_indicateurs : (string * string) list -> unit *)
       (* @Description : supprimer une liste d'indicateurs dans le map            *)
       method supprimer_liste_indicateurs (lcles:(string*string) list) =
+       (*Parcourir le map des indicateurs et supprimer l'indicateur dont le code pays
+       et et le code indicateur correspond aux clef *)
        iter (fun cle -> self#supprimer_indicateur cle) lcles
 
       (* -- � IMPLANTER (6 PTS) ------------------------------------------*)
@@ -127,6 +133,7 @@ module Tp2h22 : TP2H22 = struct
       (* @Description : afficher les indicateurs d'un pays                *)
 
       method afficher_indicateurspays (ip:indicateur list) =
+       (*Parcourir la list des indicateurs et afficher l'indicateurs dans la list *)
        iter (fun ind -> ind#afficher_indicateur; print_newline()) ip
 
       (* -- � IMPLANTER (7 PTS) -------------------------------------------------*)
@@ -136,6 +143,7 @@ module Tp2h22 : TP2H22 = struct
 
       method afficher_valeur_indicateur (ind:indicateur)(annee:int)=
        print_string ("Valeur pour l'annee " ^ (string_of_int annee ) ^ ": " 
+       (* Afficher la valeur d'un indicateur associé a l'annee dans la liste des valeurs*)
                    ^ (let v = (assoc annee ind#get_valeurs_annees) in 
                       if (v = -1.0) then "Donnee manquante." else (string_of_float v)) ^ "\n")
 
@@ -145,6 +153,7 @@ module Tp2h22 : TP2H22 = struct
       (*                de liste d'indicateurs � partir du Map              *)
 
       method retourner_indicateurs_pays (cp:string): indicateur list =
+      (* Parcourir le map et retourner une liste d'indicateur associees a un pays donne*)
        IndicateursMap.fold (fun _ i acc -> acc @ [i]) 
            (IndicateursMap.filter (fun (x,y) ind -> x = cp) !map_indicateurs) []
 
@@ -177,6 +186,7 @@ module Tp2h22 : TP2H22 = struct
       (* @Description : �crire les informations d'un indicateur sur un flux     *)
 
       method sauvegarder_indicateur (i:indicateur) (flux:out_channel) =
+      (* sauvegarder un indicateur dans un fichier a travers un flux ouvert*)
             let chaine = self#retourner_chi i in
             output_string flux chaine
 
@@ -188,12 +198,13 @@ module Tp2h22 : TP2H22 = struct
           print_string "Outil de recherche d'indicateurs\n";
           print_string "Chargement des donnees en cours ...\n";
           flush stdout;
+          (* Instancier un systeme d'indicateur pour charger les donnees *)
           let si = new sysind_education "" "" in
           let _,t = timeRun si#charger_donnees nom_fichier in
           print_string ("Chargement termine dans un temps de: " ^ (string_of_float t) ^ " secondes\n");
           print_string "Veuillez entrer le code du pays qui vous interesse:\n";
           flush stdout;
-          let si = new sysind_education "" "" in
+          (* Recuperer le code pays et rechercher les indicateurs associes*)
           let pch = read_line () in
           let lip = si#retourner_indicateurs_pays pch in
           if (lip = []) then print_string "Aucune donnee trouvee, veuillez verifier le code du pays" else
@@ -202,9 +213,12 @@ module Tp2h22 : TP2H22 = struct
           print_string ("Veuillez entrer le numero de l'indicateur dont vous voulez afficher (de 1 a " ^ nb ^ ")\n");
           ignore (read_line ());
           flush stdout;
+          (* Recuperer la position d'un indicateur et l'enregistrer dans un fichier*)
           let i = read_int () in
           let ind = nth lip (i-1) in
-            self#sauvegarder_indicateur ind (open_out "Resultat.txt");
+          let flux = open_out "Resultats.txt" in 
+            self#sauvegarder_indicateur ind flux;
+            close_out flux;
             print_string "Veuillez consulter le fichier 'Resultats.txt' dans votre repertoire courant!";
             print_string "\nMerci est au revoir!"
 
@@ -213,7 +227,7 @@ module Tp2h22 : TP2H22 = struct
       (* @Description : affiche une interface graphique                         *)
 
       method lancer_interface_sindicateurs =
-	(* � compl�ter *)
+	(* Instancier uns systeme d'indicateur et charger les donnees*)
 	let si = new sysind_education "les donnees ouvertes de la banque mondiale" "l'education" in
         print_string "Chargement des donnees en cours ...\n";
         flush stdout;
@@ -234,7 +248,7 @@ module Tp2h22 : TP2H22 = struct
 		Textvariable.set text_var_resultat "";
 		let list_pays = Listbox.create ~background:(`Color "#55aa99")
     	top in
-		pack[list_pays]~side:`Top ~fill:`X;      (*  creation de liste box pour afficher les listes *)
+		pack[list_pays]~side:`Top ~fill:`X;      (*  creation de liste box pour afficher les pays *)
 		let _ = Listbox.insert
     ~index:`End
 		~texts: (map(fun indic_list->
@@ -242,7 +256,7 @@ module Tp2h22 : TP2H22 = struct
       indic#get_code_pays ^ ": "^indic#get_nom_pays) si#retourner_donnees) list_pays in
 		let list_indicateur = Listbox.create ~background:(`Color "#c0f6e0")
    	top in
-		pack[list_indicateur]~side:`Top ~fill:`X;
+		pack[list_indicateur]~side:`Top ~fill:`X;  (*  creation de liste box pour afficher des indicateurs *)
 		let _ = Listbox.insert
     ~index:`End
 		~texts:(map(fun indic -> 
@@ -255,7 +269,7 @@ module Tp2h22 : TP2H22 = struct
     let label_indicteur_selectionne = Label.create ~text:"Indicateur selectionne" top in
 		let valeur_indicteur_selectionne = Label.create ~background:(`Color "#c0f6e0") ~textvariable:input_indicateur_selectionne
     top in
-		let afficher_pays = Button.create
+		let afficher_pays = Button.create  (*  creation des buttons pour affcicher le pays , l'indicateur et le resultat *)
     	~text:"Afficher le pays"
    		~command:(fun () ->
       	try                                                          
@@ -285,7 +299,7 @@ module Tp2h22 : TP2H22 = struct
 		let afficher_resultats = Button.create
 	    ~text:"Afficher le resultat"
 	   	~command:(fun () ->
-	  	let d = Toplevel.create top in
+	  	let d = Toplevel.create top in  (*  creation de la pop-up pour afficher le resultat *)
 	  	begin
         Wm.title_set d "Resultat de la recherche";
         Wm.geometry_set d "600x450";
@@ -309,7 +323,7 @@ module Tp2h22 : TP2H22 = struct
         iter (fun (x,y) -> Text.insert (`End,[])  (string_of_int x ^ ": " ^ string_of_float y ^ "\n") txt ) indicateur#get_valeurs_annees;                                  																	
 		  end)
       top in
-      (*  ajoute les labels dans la fenetre *)
+      (*  afficher les widgets dans la fenetre principale *)
 		pack[label_pays_selectionne]~side:`Top;		
 		pack[valeur_pays_selectionne]~side:`Top  ~fill:`X;
     pack[label_indicteur_selectionne]~side:`Top;
