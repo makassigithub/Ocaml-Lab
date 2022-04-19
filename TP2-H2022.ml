@@ -320,7 +320,7 @@ module Tp2h22 : TP2H22 = struct
         Text.insert (`End,[])  ("Code du pays: "^(indicateur#get_code_pays) ^ "\n") txt;
         Text.insert (`End,[])  ("Nom du pays: "^(indicateur#get_nom_pays) ^ "\n\n") txt;
         Text.insert (`End,[])  ("Valeurs de l'indicateur selon les annees:\n\n") txt;
-        iter (fun (x,y) -> Text.insert (`End,[])  (string_of_int x ^ ": " ^ string_of_float y ^ "\n") txt ) indicateur#get_valeurs_annees;                                  																	
+        iter (fun (x,y) -> Text.insert (`End,[])  (string_of_int x ^ ": " ^ string_of_float y ^ "\n") txt ) (sort_tuple_desc indicateur#get_valeurs_annees);                                  																	
 		  end)
       top in
       (*  afficher les widgets dans la fenetre principale *)

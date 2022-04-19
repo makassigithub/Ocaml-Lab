@@ -1,8 +1,8 @@
 (*********************************************************************)
 (* Langages de Programmation: IFT 3000 NRC 15997                     *)
 (* Fonctions, modules et librairies utiles pour le TP2               *)
-(* Implanter un système d'indicateurs de développement               *)
-(* en utilisant les données ouvertes de la banque mondiale           *)
+(* Implanter un systï¿½me d'indicateurs de dï¿½veloppement               *)
+(* en utilisant les donnï¿½es ouvertes de la banque mondiale           *)
 (*********************************************************************)
 
 #load "unix.cma";; (* Charger le module unix *)
@@ -10,11 +10,11 @@
 #directory "/home/etudiant/.opam/4.08.0/lib/labltk";;
 #load "labltk.cma";;  (* Charger le module labltk  *)
 
-(* Module permettant d'utiliser un map dont les clés sont des paires de chaînes de caractères *)
+(* Module permettant d'utiliser un map dont les clï¿½s sont des paires de chaï¿½nes de caractï¿½res *)
 module PaireCles =
     struct
        type t = string * string
-       (* Les clés dans le map doivent être ordonnées (donc comparables) *)
+       (* Les clï¿½s dans le map doivent ï¿½tre ordonnï¿½es (donc comparables) *)
        let compare (x0,y0) (x1,y1) =
            match String.compare x0 x1 with
              | 0 -> String.compare y0 y1
@@ -33,27 +33,27 @@ open Tk
 (* ****************************************************************)
 
 (* appartient : 'a -> 'a list -> bool                   *)
-(* Retourner si un élément existe ou non dans une liste *)
+(* Retourner si un ï¿½lï¿½ment existe ou non dans une liste *)
 
 let appartient e l = exists (fun x -> x = e) l
 
 (* enlever : 'a -> 'a list -> 'a list *)
-(* Enlever un élément dans une liste  *)
+(* Enlever un ï¿½lï¿½ment dans une liste  *)
 
 let enlever e l =
   let (l1, l2) = partition (fun x -> x = e) l
   in l2
 
 (* remplacer : 'a -> 'a -> 'a list -> 'a list       *)
-(* Remplacer un élément par un autre dans une liste *)
+(* Remplacer un ï¿½lï¿½ment par un autre dans une liste *)
 
 let remplacer e e' l =
   map (fun x -> (if (x = e) then e' else x)) l
 
 (* uniques : string list -> string list                         *)
-(* Retourner une liste ne contenant que des éléments uniques    *)
-(* Les chaînes vides sont également enlevées de la liste        *)
-(* ainsi que les espaces inutiles avant et/ou après les chaînes *)
+(* Retourner une liste ne contenant que des ï¿½lï¿½ments uniques    *)
+(* Les chaï¿½nes vides sont ï¿½galement enlevï¿½es de la liste        *)
+(* ainsi que les espaces inutiles avant et/ou aprï¿½s les chaï¿½nes *)
 
 let uniques liste =
   let ltrim = map (fun ch -> String.trim ch) liste in
@@ -64,14 +64,14 @@ let uniques liste =
   in fct ltrim
 
 (* decouper_chaine : string -> string -> string list                          *)
-(* Retourner une liste en découpant une chaîne selon un séparateur (p.ex "|") *)
+(* Retourner une liste en dï¿½coupant une chaï¿½ne selon un sï¿½parateur (p.ex "|") *)
 
 let decouper_chaine chaine separateur = split (regexp separateur) chaine
 
 (* timeRun : ('a -> 'b) -> 'a -> 'b * float                                     *)
-(* Permet  d'estimer la durée d'exécution d'une fonction passée en argument;    *)
-(* Elle prend en argument la fonction à évaluer et un paramètre, et retourne le *)
-(* résultat de cette application ainsi que la durée de cette application        *)
+(* Permet  d'estimer la durï¿½e d'exï¿½cution d'une fonction passï¿½e en argument;    *)
+(* Elle prend en argument la fonction ï¿½ ï¿½valuer et un paramï¿½tre, et retourne le *)
+(* rï¿½sultat de cette application ainsi que la durï¿½e de cette application        *)
 
 let timeRun f x =
   let time1 = Unix.gettimeofday() in
@@ -81,7 +81,7 @@ let timeRun f x =
 
 (* read_line : in_channel -> string                        *)
 (* Permet de lire une ligne dans un fichier                *)
-(* Elle retourne une chaîne vide si le fichier est terminé *)
+(* Elle retourne une chaï¿½ne vide si le fichier est terminï¿½ *)
 
 let lire_ligne ic =
    try
@@ -89,11 +89,15 @@ let lire_ligne ic =
    with End_of_file -> ""
 
 (* lire_fichier : in_channel -> string -> string list list                     *)
-(* Lire un fichier CSV et retourne une lite de listes de chaînes de caractères *)
-(* en spécifiant le séparateur qu'il faut utiliser pour délimiter les chaînes  *)
+(* Lire un fichier CSV et retourne une lite de listes de chaï¿½nes de caractï¿½res *)
+(* en spï¿½cifiant le sï¿½parateur qu'il faut utiliser pour dï¿½limiter les chaï¿½nes  *)
 
 let rec lire_fichier (flux:in_channel) (separateur:string) =
    let ligne =lire_ligne flux in
    match ligne with
     | "" -> []
     | s -> (decouper_chaine (String.trim s) separateur)::(lire_fichier flux separateur)
+
+(* Cette fonction servira a trier les valeurs_annee de maniere decroissante en fonction de l'annee *)
+let sort_tuple_desc (tuples: (int*float) list) =
+    sort_uniq (fun (x1,y1) (x2,y2) -> compare x2 x1) tuples;
